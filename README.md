@@ -1,4 +1,4 @@
-# spamfilter
+# antibot
 
 ```
 A simple spamfilter with autotraining
@@ -7,12 +7,14 @@ A simple spamfilter with autotraining
 ## Install
 
 ```bash
-npm i --save spamfilter
+npm i --save antibot
 ```
 
 ## Example
 
 ```js
+const spamfilter = require("antibot");
+
 const instance = spamfilter.create(["spam"], {
   onFiltered: (spam) =>
     spam.split(" ").flatMap((word) => [`_${word}_`, `-${word}-`]),
