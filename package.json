@@ -1,5 +1,5 @@
 {
-  "name": "spamfilter",
+  "name": "antibot",
   "version": "1.0.1",
   "description": "A simple auto-training spamfilter",
   "homepage": "thepicture/spamfilter",
@@ -15,7 +15,8 @@
     "filter",
     "spamfilter",
     "auto",
-    "training"
+    "training",
+    "bot"
   ],
   "author": "thepicture",
   "license": "ISC"
