@@ -1,0 +1,19 @@
+{
+  "name": "spamfilter",
+  "version": "1.0.0",
+  "description": "A simple auto-training spamfilter",
+  "homepage": "thepicture/spamfilter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "spam",
+    "filter",
+    "spamfilter",
+    "auto",
+    "training"
+  ],
+  "author": "thepicture",
+  "license": "ISC"
+}
