@@ -134,4 +134,49 @@ describe("spamfilter", () => {
 
     assert.deepStrictEqual(actual, expected);
   });
+
+  it("should instantiate plugin", () => {
+    const expected = true;
+
+    const actual =
+      new (class extends spamfilter.Plugin {
+        afterFiltered(contents) {
+          return contents;
+        }
+      })() instanceof spamfilter.Plugin;
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should inject plugins after filtered to Spamfilter", () => {
+    const expected = true;
+    const plugin = new (class extends spamfilter.Plugin {
+      afterFiltered(contents) {
+        return contents.map((word) => word.split("").reverse().join(""));
+      }
+    })();
+    const filter = spamfilter.create(["test"]);
+    filter.inject(plugin);
+
+    filter.test("test");
+    const actual = filter.test("TSET");
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should inject plugins before filtered to Spamfilter", () => {
+    const expected = true;
+    const plugin = new (class extends spamfilter.Plugin {
+      beforeFiltered(content) {
+        return content.split("").reverse().join("");
+      }
+    })();
+    const filter = spamfilter.create(["123"]);
+    filter.inject(plugin);
+
+    filter.test("123");
+    const actual = filter.test("321");
+
+    assert.strictEqual(actual, expected);
+  });
 });
