@@ -71,6 +71,32 @@ Explains the reason of detection as a tree, e.g.
 };
 ```
 
+## Plugins
+
+```js
+const spamfilter = require("antibot");
+
+class CustomPlugin extends spamfilter.Plugin {
+  beforeFiltered(content: string) {
+    // ... preprocessing returning string
+    return content;
+  }
+
+  afterFiltered(contents: string[]) {
+    // ... postprocessing returning string array
+    return contents;
+  }
+}
+
+const filter = spamfilter.create(...);
+
+filter.inject(new CustomPlugin())
+```
+
+`beforeFiltered` fires before main intermediate processing as asserted in `Spamfilter` params `onFiltered`
+
+`afterFiltered` fires after main intermediate processing as asserted in `Spamfilter` params `onFiltered`
+
 ## Test
 
 ```bash
