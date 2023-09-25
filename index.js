@@ -6,16 +6,24 @@ const compose =
 const trim = (text) => text.trim();
 const lower = (text) => text.toLowerCase();
 
-const Spamfilter = class Spamfilter {
-  #dict;
-  #tree;
+class Plugin {
+  beforeFiltered(contents) {
+    return contents;
+  }
+
+  afterFiltered(contents) {
+    return contents;
+  }
+}
+
+class Spamfilter {
+  #dict = {};
+  #tree = {};
+  #plugins = [];
   #options;
-  #contents;
+  #contents = [];
 
   constructor(contents = [], options) {
-    this.#dict = {};
-    this.#tree = {};
-    this.#contents = [];
     this.#options = options;
 
     contents.forEach((content) => this.#ban(content));
@@ -38,13 +46,31 @@ const Spamfilter = class Spamfilter {
     return this.#tree;
   }
 
+  inject(plugin) {
+    if (!(plugin instanceof Plugin)) {
+      throw new Error("Plugin instance expected");
+    }
+
+    this.#plugins.push(plugin);
+  }
+
   #ban(
     content,
     tactic = (content) => content.split(" ").map(compose(trim, lower))
   ) {
     const { skipOnFilteredOnInit, onFiltered } = this.#options ?? {};
 
-    const words = ((!skipOnFilteredOnInit && onFiltered) || tactic)(content);
+    let words = content;
+
+    for (const plugin of this.#plugins) {
+      words = plugin.beforeFiltered(words);
+    }
+
+    words = ((!skipOnFilteredOnInit && onFiltered) || tactic)(words);
+
+    for (const plugin of this.#plugins) {
+      words = plugin.afterFiltered(words);
+    }
 
     if (skipOnFilteredOnInit) {
       this.#options.skipOnFilteredOnInit = false;
@@ -66,9 +92,11 @@ const Spamfilter = class Spamfilter {
       this.#dict[word] = word;
     });
   }
-};
+}
 
 module.exports = {
   Spamfilter,
+  Plugin,
   create: (contents, options) => new Spamfilter(contents, options),
+  plugin: (params) => new Plugin(params),
 };
