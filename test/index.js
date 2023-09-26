@@ -179,4 +179,16 @@ describe("spamfilter", () => {
 
     assert.strictEqual(actual, expected);
   });
+
+  it("should override detection behavior", () => {
+    const expected = true;
+
+    const filter = spamfilter.create(["123"], {
+      onDetection: (text, dict) => Object.keys(dict).length === text.length,
+    });
+
+    const actual = filter.test("3");
+
+    assert.strictEqual(actual, expected);
+  });
 });

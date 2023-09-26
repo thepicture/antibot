@@ -31,9 +31,10 @@ class Spamfilter {
 
   test(content) {
     const matched =
-      !content ||
-      !!this.#dict[lower(content)] ||
-      this.#contents.some((spam) => lower(content).includes(spam));
+      this.#options?.onDetection?.(content, this.#dict) ??
+      (!content ||
+        !!this.#dict[lower(content)] ||
+        this.#contents.some((spam) => lower(content).includes(spam)));
 
     if (content && matched) {
       this.#ban(content);
