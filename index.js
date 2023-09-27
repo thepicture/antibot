@@ -1,3 +1,5 @@
+const Plugin = require("./plugins/Base");
+
 const compose =
   (...fns) =>
   (input) =>
@@ -5,16 +7,6 @@ const compose =
 
 const trim = (text) => text.trim();
 const lower = (text) => text.toLowerCase();
-
-class Plugin {
-  beforeFiltered(contents) {
-    return contents;
-  }
-
-  afterFiltered(contents) {
-    return contents;
-  }
-}
 
 class Spamfilter {
   #dict = {};
@@ -30,9 +22,14 @@ class Spamfilter {
   }
 
   test(content) {
+    const pluginThatDetected = this.#plugins.find((plugin) =>
+      plugin.onDetection?.(content, this.#dict)
+    );
+
     const matched =
       this.#options?.onDetection?.(content, this.#dict) ??
       (!content ||
+        !!pluginThatDetected ||
         !!this.#dict[lower(content)] ||
         this.#contents.some((spam) => lower(content).includes(spam)));
 
