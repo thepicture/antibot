@@ -5,7 +5,9 @@
   "homepage": "thepicture/spamfilter",
   "main": "index.js",
   "files": [
-    "index.js"
+    "index.js",
+    "plugins",
+    "lib"
   ],
   "scripts": {
     "test": "node test"

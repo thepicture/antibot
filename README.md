@@ -22,7 +22,7 @@ const instance = spamfilter.create(["spam"], {
 });
 
 const isSpam = instance.test("SPAM filter"); // true
-const isSpamToo = instance.test("_FILTER_"); // true, because it learned from onFiltered call
+const isSpamToo = instance.test("_FILTER_"); // true, because it trained from onFiltered call
 ```
 
 ## API
@@ -106,6 +106,36 @@ filter.inject(new CustomPlugin())
 `beforeFiltered` fires before main intermediate processing as asserted in `Spamfilter` params `onFiltered`
 
 `afterFiltered` fires after main intermediate processing as asserted in `Spamfilter` params `onFiltered`
+
+`onDetection` of params takes precedence over `onDetection` of plugin(s)
+
+## Predefined plugins
+
+### Levenshtein
+
+```js
+const LevenshteinPlugin = require("antibot/plugins/LevenshteinPlugin");
+
+const filter = spamfilter.create(["abcd"]);
+filter.inject(new LevenshteinPlugin({ sensitivity: 1 }));
+
+filter.test("abced");
+```
+
+### Nilsimsa
+
+```js
+const NilsimsaPlugin = require("antibot/plugins/NilsimsaPlugin");
+
+const expected = true;
+
+const filter = spamfilter.create(["1234 abcde"], {
+  onFiltered: (exact) => [exact],
+});
+filter.inject(new NilsimsaPlugin({ from: 128, to: 128 }));
+
+filter.test("1234 abcde");
+```
 
 ## Test
 

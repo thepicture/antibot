@@ -1,6 +1,8 @@
 const assert = require("node:assert");
 const { describe, it } = require("node:test");
 const spamfilter = require("..");
+const NilsimsaPlugin = require("../plugins/NilsimsaPlugin");
+const LevenshteinPlugin = require("../plugins/LevenshteinPlugin");
 
 describe("spamfilter", () => {
   it("should instantiate when called .create()", () => {
@@ -188,6 +190,52 @@ describe("spamfilter", () => {
     });
 
     const actual = filter.test("3");
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should allow predefined levenshtein plugin to work", () => {
+    const expected = true;
+
+    const filter = spamfilter.create(["abcd"]);
+    filter.inject(new LevenshteinPlugin({ sensitivity: 1 }));
+
+    const actual = filter.test("abced");
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should not trigger predefined levenshtein plugin with non sufficient sensitivity", () => {
+    const expected = false;
+
+    const filter = spamfilter.create(["abcd"]);
+    filter.inject(new LevenshteinPlugin({ sensitivity: 1 }));
+
+    const actual = filter.test("abceed");
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should make sensitivity 1 by default", () => {
+    const expected = false;
+
+    const filter = spamfilter.create(["abcd"]);
+    filter.inject(new LevenshteinPlugin());
+
+    const actual = filter.test("abceed");
+
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should allow nilsimsa plugin to work", () => {
+    const expected = true;
+
+    const filter = spamfilter.create(["1234 abcde"], {
+      onFiltered: (exact) => [exact],
+    });
+    filter.inject(new NilsimsaPlugin({ from: 128, to: 128 }));
+
+    const actual = filter.test("1234 abcde");
 
     assert.strictEqual(actual, expected);
   });
