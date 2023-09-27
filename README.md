@@ -53,6 +53,16 @@ const instance = spamfilter.create(["spam"], {
 
 `skipOnFilteredOnInit` - the words passed in `.create()` method will not be transformed through `onFiltered` and leave intact
 
+`onDetection` - overrides detection behavior
+
+```js
+const filter = spamfilter.create(["123"], {
+  onDetection: (text, dict) => Object.keys(dict).length === text.length,
+});
+
+filter.test("3"); // true
+```
+
 ```js
 const tree = instance.explain();
 ```
